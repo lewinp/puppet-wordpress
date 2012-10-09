@@ -51,7 +51,17 @@ define('SECURE_AUTH_SALT', 'put your unique phrase here');
 define('LOGGED_IN_SALT',   'put your unique phrase here');
 define('NONCE_SALT',       'put your unique phrase here');
 
-/**#@-*/
+/* multisite config
+define('DB_COLLATE', '');
+define('WP_ALLOW_MULTISITE', true);
+define( 'MULTISITE', true );
+define('SUBDOMAIN_INSTALL', true);
+$base = '/';
+define('DOMAIN_CURRENT_SITE', '<%= ::domainnam -%>');
+define('PATH_CURRENT_SITE', '/');
+define('SITE_ID_CURRENT_SITE', 1);
+define('BLOG_ID_CURRENT_SITE', 1);
+*/
 
 /**
  * WordPress Database Table prefix.
