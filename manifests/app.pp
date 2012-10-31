@@ -20,9 +20,15 @@ class wordpress::app (
     default  => 'php',
   }
 
-  package { ['wget','unzip',$apache,$php,$phpmysql]:
-    ensure => latest
-  }
+  $packages = [
+    'wget',
+    'unzip',
+    $apache,
+    $php,
+    $phpmysql,
+  ]
+
+  wordpress::install_dependency { $packages: }
 
   $vhost_path = $apache ? {
     httpd    => '/etc/httpd/conf.d/wordpress.conf',
