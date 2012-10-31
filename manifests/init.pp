@@ -12,12 +12,11 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class wordpress (
-  $db_name='wordpress',
-  $db_host='localhost',
-  $db_user = 'wordpress',
-  $db_password='ThereIsN0CowL3v3l',
-)
-{
+  $db_name     = $wordpress::params::db_name,
+  $db_host     = $wordpress::params::db_host,
+  $db_user     = $wordpress::params::db_user,
+  $db_password = $wordpress::params::db_password,
+) inherits wordpress::params {
   class { 'wordpress::app': }
 
   class { 'mysql::server':
