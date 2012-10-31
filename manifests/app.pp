@@ -2,25 +2,22 @@ class wordpress::app {
 
   $wordpress_archive = 'wordpress-3.4.2.zip'
 
-  $apache = $::operatingsystem ? {
-    Ubuntu   => apache2,
-    CentOS   => httpd,
-    Debian   => apache2,
-    default  => httpd
+  $apache = $::osfamily ? {
+    'RedHat' => 'httpd',
+    'Debian' => 'apache2',
+    default  => httpd,
   }
 
-  $phpmysql = $::operatingsystem ? {
-    Ubuntu   => php5-mysql,
-    CentOS   => php-mysql,
-    Debian   => php5-mysql,
-    default  => php-mysql
+  $phpmysql = $::osfamily ? {
+    'RedHat' => 'php-mysql',
+    'Debian' => 'php5-mysql',
+    default  => 'php-mysql',
   }
 
-  $php = $::operatingsystem ? {
-    Ubuntu   => libapache2-mod-php5,
-    CentOS   => php,
-    Debian   => libapache2-mod-php5,
-    default  => php
+  $php = $::osfamily ? {
+    'RedHat' => 'php',
+    'Debian' => 'libapache2-mod-php5',
+    default  => 'php',
   }
 
   package { ['unzip',$apache,$php,$phpmysql]:
