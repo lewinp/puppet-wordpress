@@ -3,4 +3,6 @@ class wordpress::params {
   $db_host     = 'localhost'
   $db_user     = 'wordpress'
   $db_password ='ThereIsN0CowL3v3l'
+
+  $domain      = $::domain
 }

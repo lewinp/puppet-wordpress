@@ -16,18 +16,11 @@ class wordpress (
   $db_host     = $wordpress::params::db_host,
   $db_user     = $wordpress::params::db_user,
   $db_password = $wordpress::params::db_password,
+  $domain      = $wordpress::params::domain,
 ) inherits wordpress::params {
   class { 'wordpress::app': }
 
-  class { 'mysql::server':
-    config_hash => {
-      'root_password' => "Use0nlyinc4seof3merg3ncy",
-    },
-  }
-
-  class { 'mysql::server::account_security': }
-
-  database { "$db_name":
+  database { $db_name:
     ensure          => present,
     charset         => 'utf8',
   }
@@ -39,11 +32,5 @@ class wordpress (
 
   database_grant { "$db_user@$db_host/$db_name":
     privileges      => [all],
-  }
-
-  class { 'mysql::backup':
-    backupuser      => 'backups',
-    backuppassword  => 'youD0haveAbackup-right?',
-    backupdir       => '/var/tmp',
   }
 }
