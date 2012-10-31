@@ -1,6 +1,6 @@
-class wordpress::app {
-
-  $wordpress_archive = 'wordpress-3.4.2.zip'
+class wordpress::app (
+  $version = 'latest'
+) {
 
   $apache = $::osfamily ? {
     'RedHat' => 'httpd',
@@ -20,7 +20,7 @@ class wordpress::app {
     default  => 'php',
   }
 
-  package { ['unzip',$apache,$php,$phpmysql]:
+  package { ['wget','unzip',$apache,$php,$phpmysql]:
     ensure => latest
   }
 
@@ -39,6 +39,33 @@ class wordpress::app {
     subscribe  => File['wordpress_vhost'];
   }
 
+  if $version == 'latest' {
+    $wordpress_archive = 'latest.zip'
+    $release_url       = "http://wordpress.org/${wordpress_archive}"
+  }
+  else {
+    $wordpress_archive = 'wordpress-${version}.zip'
+    $release_url       = "http://wordpress.org/download/release-archive/${wordpress_archive}"
+  }
+  
+
+  exec {
+    'wordpress_download_installer':
+      command   => "wget $release_url -O /opt/wordpress/setup_files/${wordpress_archive}",
+      logoutput => on_failure,
+      creates   => "/opt/wordpress/setup_files/${wordpress_archive}",
+      path         => ['/bin','/usr/bin','/usr/sbin','/usr/local/bin'],
+      notify  =>  Exec['wordpress_extract_installer'],
+      require   => [ Package["wget"] ];
+  }
+
+  $needed_files = [
+    'wordpress_php_configuration',
+    'wordpress_themes',
+    'wordpress_plugins',
+    'wordpress_htaccess_configuration',
+  ]
+
   file {
     'wordpress_application_dir':
       ensure  =>  directory,
@@ -47,18 +74,7 @@ class wordpress::app {
     'wordpress_setup_files_dir':
       ensure  =>  directory,
       path    =>  '/opt/wordpress/setup_files',
-      before  =>  File[
-                      'wordpress_php_configuration',
-                      'wordpress_themes',
-                      'wordpress_plugins',
-                      'wordpress_installer',
-                      'wordpress_htaccess_configuration'
-                      ];
-    'wordpress_installer':
-      ensure  =>  file,
-      path    =>  "/opt/wordpress/setup_files/${wordpress_archive}",
-      notify  =>  Exec['wordpress_extract_installer'],
-      source  =>  "puppet:///modules/wordpress/${wordpress_archive}";
+      before  =>  [ File[$needed_files], Exec['wordpress_download_installer'] ];
     'wordpress_php_configuration':
       ensure     =>  file,
       path       =>  '/opt/wordpress/wp-config.php',

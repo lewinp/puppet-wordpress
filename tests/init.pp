@@ -1,8 +1,6 @@
-$hostname = 'ubuntu1204'
-
 class { 'mysql::server':
   config_hash => {
-    'root_password' => "Use0nlyinc4seof3merg3ncy",
+    'root_password' => 'Use0nlyinc4seof3merg3ncy',
   },
 }
 
@@ -13,7 +11,7 @@ class { 'mysql::backup':
 }
 
 class {'wordpress':
-  db_name =>      "mydbname",
-  db_user =>      "mydbuser",
-  db_password =>  "mydbpassword"
+  db_name     => 'wordpressdb',
+  db_user     => 'wordpress',
+  db_password => 'password',
 }

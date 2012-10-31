@@ -12,25 +12,22 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class wordpress (
+  $version     = $wordpress::params::version,
   $db_name     = $wordpress::params::db_name,
   $db_host     = $wordpress::params::db_host,
   $db_user     = $wordpress::params::db_user,
   $db_password = $wordpress::params::db_password,
   $domain      = $wordpress::params::domain,
 ) inherits wordpress::params {
-  class { 'wordpress::app': }
-
-  database { $db_name:
-    ensure          => present,
-    charset         => 'utf8',
+  class { 'wordpress::app':
+    version => $version,
   }
 
-  database_user { "$db_user@%$db_host":
-    ensure          => present,
-    password_hash   => mysql_password("$db_password"),
-  } 
-
-  database_grant { "$db_user@$db_host/$db_name":
-    privileges      => [all],
+  mysql::db { $db_name:
+    user     => $db_user,
+    password => $db_password,
+    host     => $db_host,
+    grant    => ['all'],
+    require  => Class['mysql::config'],
   }
 }
