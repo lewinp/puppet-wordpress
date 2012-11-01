@@ -7,4 +7,7 @@ class wordpress::params {
   $db_password = 'ThereIsN0CowL3v3l'
 
   $domain      = $::domain
+
+  $document_root = '/opt/wordpress'
+  $setup_root    = '/tmp/wordpress'
 }

@@ -18,9 +18,14 @@ class wordpress (
   $db_user     = $wordpress::params::db_user,
   $db_password = $wordpress::params::db_password,
   $domain      = $wordpress::params::domain,
+
+  $document_root = $wordpress::params::document_root,
+  $setup_root    = $wordpress::params::setup_root,
 ) inherits wordpress::params {
   class { 'wordpress::app':
-    version => $version,
+    version       => $version,
+    document_root => $document_root,
+    setup_root    => $setup_root,
   }
 
   mysql::db { $db_name:
