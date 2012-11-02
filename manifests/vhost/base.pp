@@ -1,0 +1,5 @@
+class wordpress::vhost::base (
+  
+) {
+  
+}

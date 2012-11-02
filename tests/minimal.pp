@@ -1,0 +1,3 @@
+class { 'wordpress':
+  httpd => 'absent',
+}

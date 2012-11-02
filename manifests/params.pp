@@ -1,5 +1,6 @@
 class wordpress::params {
   $version     = 'latest'
+  $httpd       = 'apache'
 
   $db_name     = 'wordpress'
   $db_host     = 'localhost'

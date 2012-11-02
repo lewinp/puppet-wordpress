@@ -12,6 +12,7 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class wordpress (
+  $httpd       = $wordpress::params::httpd,
   $version     = $wordpress::params::version,
   $db_name     = $wordpress::params::db_name,
   $db_host     = $wordpress::params::db_host,
@@ -22,10 +23,28 @@ class wordpress (
   $document_root = $wordpress::params::document_root,
   $setup_root    = $wordpress::params::setup_root,
 ) inherits wordpress::params {
+  include mysql::server
+  
   class { 'wordpress::app':
     version       => $version,
     document_root => $document_root,
     setup_root    => $setup_root,
+  }
+
+  case $httpd {
+    'absent': { }
+    'standalone': {
+      class { 'wordpress::vhost::standalone':
+        document_root => $document_root,
+        domain        => $domain,
+      }
+    }
+    'apache', default: {
+      class { 'wordpress::vhost::apache':
+        document_root => $document_root,
+        domain        => $domain,
+      }
+    }
   }
 
   mysql::db { $db_name:

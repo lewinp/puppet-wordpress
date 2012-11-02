@@ -4,48 +4,12 @@ class wordpress::app (
   $setup_root,
 ) {
 
-  $apache = $::osfamily ? {
-    'RedHat' => 'httpd',
-    'Debian' => 'apache2',
-    default  => httpd,
-  }
-
-  $phpmysql = $::osfamily ? {
-    'RedHat' => 'php-mysql',
-    'Debian' => 'php5-mysql',
-    default  => 'php-mysql',
-  }
-
-  $php = $::osfamily ? {
-    'RedHat' => 'php',
-    'Debian' => 'libapache2-mod-php5',
-    default  => 'php',
-  }
-
   $packages = [
     'wget',
     'unzip',
-    $apache,
-    $php,
-    $phpmysql,
   ]
 
   wordpress::install_dependency { $packages: }
-
-  $vhost_path = $apache ? {
-    httpd    => '/etc/httpd/conf.d/wordpress.conf',
-    apache2  => '/etc/apache2/sites-enabled/000-default',
-    default  => '/etc/httpd/conf.d/wordpress.conf',
-  }
-
-  service { $apache:
-    ensure     => running,
-    enable     => true,
-    hasrestart => true,
-    hasstatus  => true,
-    require    => Package[$apache, $php, $phpmysql],
-    subscribe  => File['wordpress_vhost'];
-  }
 
   if $version == 'latest' {
     $wordpress_archive = 'latest.zip'
@@ -104,12 +68,6 @@ class wordpress::app (
       ignore     => '.svn',
       notify     => Exec['wordpress_extract_plugins'],
       subscribe  => Exec['wordpress_extract_installer'];
-    'wordpress_vhost':
-      ensure   => file,
-      path     => $vhost_path,
-      content  => template('wordpress/wordpress.conf.erb'),
-      replace  => true,
-      require  => Package[$apache];
   }
 
   exec {
