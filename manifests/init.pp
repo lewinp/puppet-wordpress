@@ -39,6 +39,12 @@ class wordpress (
         domain        => $domain,
       }
     }
+    'nginx': {
+      class { 'wordpress::vhost::nginx':
+        document_root => $document_root,
+        domain        => $domain,
+      }
+    } 
     'apache', default: {
       class { 'wordpress::vhost::apache':
         document_root => $document_root,
